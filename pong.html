@@ -20,9 +20,67 @@
 		TOP = 0;
 		BOTTOM = 500;
 		
+		document.onkeydown = function(e){
+			controller.startInput(e.keyCode);
+			
+		}
+
+		document.onkeyup = function(e){
+			controller.stopInput(e.keyCode);
+		}
+
 		function Player(that)
 		{
-			
+			that.direction=0;
+			that.moveUpStart = function()
+			{
+				if(that.direction == 0)
+				{
+					that.select.animate(Math.abs(TOP-that.select.y())*3).y(TOP);
+					that.direction = 1;
+				}
+				else if (that.direction == -1)
+				{
+					that.select.stop();
+					that.select.animate(Math.abs(TOP-that.select.y())*3).y(TOP);
+					that.direction = 1;
+
+				}
+			}
+
+			that.moveUpStop = function()
+			{
+				if(that.direction == 1)
+				{
+					that.select.stop();
+					that.direction = 0;
+				}
+			}
+
+			that.moveDownStart = function()
+			{
+				if(that.direction == 0)
+				{
+					that.select.animate(Math.abs(BOTTOM-that.select.y())*3).y(BOTTOM);
+					that.direction = -1;
+				}
+				else if (that.direction == 1)
+				{
+					that.select.stop();
+					that.select.animate(Math.abs(BOTTOM-that.select.y())*3).y(BOTTOM);
+					that.direction = -1;
+					
+				}
+			}
+
+			that.moveDownStop = function()
+			{
+				if(that.direction == -1)
+				{
+					that.select.stop();
+					that.direction = 0;
+				}
+			}
 		}
 		
 		var Ball = function()
@@ -127,22 +185,72 @@
 		
 		function Connor()
 		{
+			Player(this);
 			this.select = svg.rect(20,100).move(LEFT,100);
 			
 		}
 		
 		function Ezio()
 		{
+			Player(this);
 			this.select = svg.rect(20,100).move(RIGHT,100);
 			
 		}
 		
+		function Controller(game)
+		{
+			this.game = game;
+
+			this.startInput = function(code)
+			{
+				if (code == 65)
+				{
+					this.game.connor.moveUpStart();
+				}
+				else if (code == 90)
+				{
+					this.game.connor.moveDownStart();
+				}
+				else if (code == 75)
+				{
+					this.game.ezio.moveUpStart();
+				}
+				else if (code == 77)
+				{
+					this.game.ezio.moveDownStart();
+				}
+			}
+			
+			this.stopInput = function(code)
+			{
+				if (code == 65)
+				{
+					this.game.connor.moveUpStop();
+				}
+				else if (code == 90)
+				{
+					this.game.connor.moveDownStop();
+				}
+				else if (code == 75)
+				{
+					this.game.ezio.moveUpStop();
+				}
+				else if (code == 77)
+				{
+					this.game.ezio.moveDownStop();
+				}
+			}
+
+
+		}
+
+
 		function Main()
 		{
 			ball = new Ball();
 			connor = new Connor();
 			ezio = new Ezio();
-			
+			controller = new Controller(this);			
 			
 			ball.animate();
 		}
