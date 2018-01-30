@@ -1,0 +1,157 @@
+<html>
+<head>
+	<script src="js/svg.js"></script>
+	<script src="js/svg.pathmorphing.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery.csv.min.js"></script>
+
+</head>
+<body>
+
+	<div  align="center">
+		<div class="graph" ></div>
+	</div>
+		
+	<script>
+		var svg = new SVG(document.querySelector(".graph")).size("100%", 600);
+
+		LEFT = 20;
+		RIGHT = 1000;
+		TOP = 0;
+		BOTTOM = 500;
+		
+		function Player(that)
+		{
+			
+		}
+		
+		var Ball = function()
+		{
+			this.select = svg.circle(50);
+			this.direction = {x:1,y:1};
+			this.pos = {x:0,y:0};
+			this.duration = 0;
+			this.animate = function()
+			{
+				that = this;
+				dest = this.getDestination(this.pos,this.direction);
+				this.pos = dest;
+				// alert(this.duration);
+				this.select.animate(this.duration*3).move(dest.x,dest.y).after(function(){
+				console.log("=============================\n")
+
+				that.direction = that.changeDirection(that.pos,that.direction);
+				that.animate();
+				});
+				
+			}
+			
+			this.changeDirection = function(pos,direction)
+			{
+				console.log("Change Direction\n");
+				console.log("Position : " + pos.x+ "," + pos.y);
+				
+				if (pos.x == LEFT)
+				{
+					direction.x = 1;
+				}
+				else if (pos.x == RIGHT)
+				{
+					direction.x = -1;
+				}
+				
+				if (pos.y == TOP)
+				{
+					direction.y = 1;
+				}
+				else if(pos.y == BOTTOM)
+				{
+					direction.y = -1;
+				}
+				
+				console.log("Direction : " + direction.x + "," + direction.y);
+
+				return direction
+				
+			}
+			
+			this.getDestination = function(pos, direction)
+			{
+				slope = direction.y * 1.0 / direction.x;
+				y_cept =   pos.y - (pos.x * slope);
+
+				console.log("Slope : "  + slope);
+				console.log("y_cept : " + y_cept);
+
+				console.log("Equation :  y = "+slope+" * x + " + y_cept);
+
+
+				if(direction.x > 0)
+				{
+					X = RIGHT;
+				}
+				else
+				{
+					X = LEFT;
+				}
+				
+				Y = slope * (X) + y_cept;
+				
+				if (Y < TOP)
+				{
+					X = (TOP - y_cept)/ slope;
+					this.duration =  Math.sqrt((pos.x - X)*(pos.x-X) + (pos.y - TOP) * (pos.y - TOP));
+					console.log("Y  < TOP");
+					return {x:X,y:TOP};
+				}
+				else if (Y > BOTTOM)
+				{
+					X = (BOTTOM - y_cept)/ slope;
+					this.duration =  Math.sqrt((pos.x - X)*(pos.x-X) + (pos.y - BOTTOM) * (pos.y - BOTTOM));
+					console.log("Y > BOTTOM");
+					return {x:X, y:BOTTOM};
+				}
+				else
+				{
+					this.duration =  Math.sqrt((pos.x - X)*(pos.x-X) + (pos.y - Y) * (pos.y - Y));
+					console.log(" Y and X")
+					return {x:X,y:Y};				
+				}
+
+				thi
+
+				
+			}
+				
+		}
+		
+		function Connor()
+		{
+			this.select = svg.rect(20,100).move(LEFT,100);
+			
+		}
+		
+		function Ezio()
+		{
+			this.select = svg.rect(20,100).move(RIGHT,100);
+			
+		}
+		
+		function Main()
+		{
+			ball = new Ball();
+			connor = new Connor();
+			ezio = new Ezio();
+			
+			
+			ball.animate();
+		}
+		
+		main = Main();
+		
+	</script>
+
+
+</body>
+
+</html>	
